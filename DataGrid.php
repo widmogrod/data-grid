@@ -96,7 +96,7 @@ class DataGrid
         return $this->getAdapter()->toArray();
     }
 
-    public function toString()
+    public function render()
     {
         return $this->getRenderer()->render();
     }

@@ -11,7 +11,7 @@ $dql = 'SELECT q FROM Question q JOIN q.answers';
 $q = $em->createQuery($dql);
 $grid = DataGrid::factory($q);
 $grid->setRenderer(new HtmlTable());
-echo $grid->toString();
+echo $grid->render();
 ```
 
 P.S. Sory for my english.
