@@ -17,7 +17,7 @@ class Doctrine extends AbstractAdapter
         {
             /* @var $adaptable \Doctrine\ORM\Query */
             $adaptable = $this->getAdaptable();
-            $this->data = $adaptable->getArrayResult();
+            $this->data = $adaptable->getScalarResult();
         }
     }
 
