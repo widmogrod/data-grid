@@ -7,6 +7,9 @@ namespace DataGrid;
 
 class DataGrid
 {
+    const CELL = 'cell';
+    const COLUMN = 'column';
+
     /**
      * @var Adapter
      */
@@ -21,6 +24,8 @@ class DataGrid
      * @var string
      */
     protected $baseUrl;
+
+    protected $specialColumns = array();
 
     final public static function factory($data, $options = null)
     {
@@ -99,5 +104,49 @@ class DataGrid
     public function render()
     {
         return $this->getRenderer()->render();
+    }
+
+    public function setSpecialColumn($columnName, $columnOptions)
+    {
+        $baseOptions = array(
+            self::CELL => null,
+            self::COLUMN => null,
+        );
+
+        if ($columnOptions instanceof \Closure) {
+            $baseOptions[self::CELL] = $columnOptions;
+        }
+
+        $this->specialColumns[$columnName] = $baseOptions;
+    }
+
+    public function setSpecialColumns(array $specialColumns)
+    {
+        $this->specialColumns = array();
+        array_walk(array($this, 'setSpecialColumn'), $specialColumns);
+    }
+
+    public function getSpecialColumns()
+    {
+        return $this->specialColumns;
+    }
+
+    public function getSpecialColumnsByType($type)
+    {
+        switch($type)
+        {
+            case self::CELL:
+                return array_map(function($item) {
+                        return $item[DataGrid::CELL];
+                }, $this->getSpecialColumns());
+
+            case self::COLUMN:
+                return array_map(function($item) {
+                        return $item[DataGrid::COLUMN];
+                }, $this->getSpecialColumns());
+
+            default:
+                throw new \InvalidArgumentException(sprintf('Undefined type "%s"', $type));
+        }
     }
 }

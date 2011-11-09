@@ -36,7 +36,10 @@ class HtmlTable implements Renderer
         $rows = array();
         while($row = array_shift($rowset))
         {
-            $rows[] = sprintf('<tr><td>%s</td></tr>', implode('</td><td>', $row));
+            $specialCells = $this->renderSpecialCell($row);
+            $row = array_merge($row, $specialCells);
+            $cells = sprintf('<td>%s</td>', implode('</td><td>', $row));
+            $rows[] = sprintf('<tr>%s</tr>', $cells);
         }
 
         return implode("\n", $rows);
@@ -45,16 +48,58 @@ class HtmlTable implements Renderer
     private function renderHead()
     {
         $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
+        $specialCells = $this->renderSpecialColumns($columns);
 
         $rows = array();
-        while($column = array_shift($columns))
-        {
-            $rows[] = sprintf('<th>%s</th>', $column['name']);
+        while($column = array_shift($columns)) {
+            $rows[] = $column['name'];
         }
-        return sprintf('<tr>%s</tr>', implode($rows));
+        $rows = array_merge($rows, $specialCells);
+        $rows = sprintf('<th>%s</th>', implode('</th><th>', $rows));
+        return sprintf('<tr>%s</tr>', $rows);
     }
 
     private function renderFoot()
     {
+    }
+
+    private function renderSpecialCell(array $row)
+    {
+        $result = array();
+
+        $specialCells = $this->dataGrid->getSpecialColumnsByType(DataGrid::CELL);
+        foreach($specialCells as $cell)
+        {
+            if ($cell instanceof \Closure)
+            {
+                $result[] = $cell($row);
+            }
+            else
+            {
+                $result[] = (string) $cell;
+            }
+        }
+
+        return $result;
+    }
+
+    private function renderSpecialColumns(array $data)
+    {
+        $result = array();
+
+        $specialColumns = $this->dataGrid->getSpecialColumnsByType(DataGrid::COLUMN);
+        foreach($specialColumns as $column)
+        {
+            if ($column instanceof \Closure)
+            {
+                $result[] = $column($data);
+            }
+            else
+            {
+                $result[] = (string) $column;
+            }
+        }
+
+        return $result;
     }
 }
