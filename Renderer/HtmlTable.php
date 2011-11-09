@@ -61,6 +61,7 @@ class HtmlTable implements Renderer
 
     private function renderFoot()
     {
+        // TODO
     }
 
     private function renderSpecialCell(array $row)
