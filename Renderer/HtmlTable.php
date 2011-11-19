@@ -15,6 +15,8 @@ class HtmlTable implements Renderer
      */
     protected $dataGrid;
 
+    protected $columnsNames;
+
     public function setDataGrid(DataGrid $dataGrid)
     {
         $this->dataGrid = $dataGrid;
@@ -32,10 +34,15 @@ class HtmlTable implements Renderer
     private function renderBody()
     {
         $rowset = $this->dataGrid->getAdapter()->toArray();
+        $columnName = $this->getColumnNames();
 
         $rows = array();
         while($row = array_shift($rowset))
         {
+            // create table with aliases
+            // this allow array_merge with named spacial columns
+            // to merge commplitly... ie. special column can swap with row cell.
+            $row = array_combine($columnName, $row);
             $specialCells = $this->renderSpecialCell($row);
             $row = array_merge($row, $specialCells);
             $cells = sprintf('<td>%s</td>', implode('</td><td>', $row));
@@ -52,11 +59,27 @@ class HtmlTable implements Renderer
 
         $rows = array();
         while($column = array_shift($columns)) {
-            $rows[] = $column['name'];
+            $name = $column['name'];
+            $rows[$name] = $column['name'];
         }
         $rows = array_merge($rows, $specialCells);
         $rows = sprintf('<th>%s</th>', implode('</th><th>', $rows));
         return sprintf('<tr>%s</tr>', $rows);
+    }
+
+    private function getColumnNames()
+    {
+        if (null === $this->columnsNames)
+        {
+            $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
+
+            $this->columnsNames = array();
+            while($column = array_shift($columns)) {
+                $this->columnsNames[] = $column['name'];
+            }
+        }
+
+        return $this->columnsNames;
     }
 
     private function renderFoot()
@@ -69,15 +92,15 @@ class HtmlTable implements Renderer
         $result = array();
 
         $specialCells = $this->dataGrid->getSpecialColumnsByType(DataGrid::CELL);
-        foreach($specialCells as $cell)
+        foreach($specialCells as $name => $cell)
         {
             if ($cell instanceof \Closure)
             {
-                $result[] = $cell($row);
+                $result[$name] = $cell($row);
             }
             else
             {
-                $result[] = (string) $cell;
+                $result[$name] = (string) $cell;
             }
         }
 
@@ -89,15 +112,15 @@ class HtmlTable implements Renderer
         $result = array();
 
         $specialColumns = $this->dataGrid->getSpecialColumnsByType(DataGrid::COLUMN);
-        foreach($specialColumns as $column)
+        foreach($specialColumns as $name => $column)
         {
             if ($column instanceof \Closure)
             {
-                $result[] = $column($data);
+                $result[$name] = $column($data);
             }
             else
             {
-                $result[] = (string) $column;
+                $result[$name] = (string) $column;
             }
         }
 
