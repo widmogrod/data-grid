@@ -25,14 +25,17 @@ class Doctrine extends AbstractAdapter
     {
         if (null === $this->columnInfo)
         {
-            $rowset = $this->toArray();
-            $row = current($rowset);
-            $row = array_keys($row);
-            $this->columnInfo = array_map(function($column) {
+            $this->columnInfo = array();
+            if ($rowset = $this->toArray())
+            {
+                $row = current($rowset);
+                $row = array_keys($row);
+                $this->columnInfo = array_map(function($column) {
                     return array(
                         'name' => $column
                     );
                 }, $row);
+            }
 
 //            /* @var $adaptable \Doctrine\ORM\Query */
 //            $adaptable = $this->getAdaptable();
