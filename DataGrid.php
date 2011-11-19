@@ -31,12 +31,16 @@ class DataGrid
     {
         switch(true)
         {
+            case ($data instanceof \Doctrine\ORM\NativeQuery):
             case ($data instanceof \Doctrine\ORM\Query):
                 $adapter = new \DataGrid\Adapter\Doctrine($data);
                 break;
 
             default:
-                throw new \InvalidArgumentException(sprintf('Data type "%s" is not suported', gettype($data)));
+                throw new \InvalidArgumentException(sprintf(
+                    'Data type "%s" is not suported',
+                    is_object($data) ? get_class($data) : gettype($data)
+                ));
         }
 
         return new self($adapter, $options);
