@@ -117,7 +117,12 @@ class DataGrid
             self::COLUMN => null,
         );
 
-        if ($columnOptions instanceof \Closure) {
+        if (is_array($columnOptions))
+        {
+            $baseOptions = array_merge($baseOptions, $columnOptions);
+        }
+        elseif ($columnOptions instanceof \Closure)
+        {
             $baseOptions[self::CELL] = $columnOptions;
         }
 

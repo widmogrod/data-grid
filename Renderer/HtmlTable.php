@@ -62,8 +62,11 @@ class HtmlTable implements Renderer
             $name = $column['name'];
             $rows[$name] = $column['name'];
         }
+
         $rows = array_merge($rows, $specialCells);
-        $rows = sprintf('<th>%s</th>', implode('</th><th>', $rows));
+        $rows = array_map(array($this, 'renderHeadCell'), $rows);
+        $rows = implode("\n", $rows);
+
         return sprintf('<tr>%s</tr>', $rows);
     }
 
@@ -120,10 +123,41 @@ class HtmlTable implements Renderer
             }
             else
             {
-                $result[$name] = (string) $column;
+                $result[$name] = $column;
             }
         }
 
         return $result;
+    }
+
+    private function renderAttribs(array $attribs)
+    {
+        $result = '';
+        foreach($attribs as $key => $value)
+        {
+            $value = (string) $value;
+            // $value = addslashes((string) $value);
+            $result .= sprintf(' %s="%s"', $key, (string) $value);
+        }
+
+        return $result;
+    }
+
+    private function renderHeadCell($data)
+    {
+        $attribs = array();
+        $name = null;
+
+        if (is_array($data))
+        {
+            $attribs = isset($data['attribs']) ? $data['attribs'] : array();
+            $name    = isset($data['name']) ? $data['name'] : '';
+        }
+        else
+        {
+            $name = (string) $data;
+        }
+
+        return sprintf('<th%s>%s</th>', $this->renderAttribs($attribs), $name);
     }
 }
