@@ -61,8 +61,14 @@ echo $grid->render();
 
 ### with your own adapter
 
+To provide unknown adapter for new data types not supported by default in DataGrid
+you should use one of following setups:
+
 ```php
-// options to provide unknown adapter for new data types not supported by default in library
+$options = array(
+    'dataTypesToAdapter' => array('Zend\Db\ResultSet\ResultSet' => 'My\DataGrid\Adapter\ResultSet'),
+);
+// or
 $options = array(
     'dataTypesToAdapter' => array('Zend\Db\ResultSet\ResultSet' => 'ZendDbResultSet'),
     'invokableAdapters' => array('ZendDbResultSet' => 'My\DataGrid\Adapter\ResultSet')
