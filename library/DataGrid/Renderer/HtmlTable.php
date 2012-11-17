@@ -19,7 +19,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
 
     public function render()
     {
-        $tableClass = 'zebra-striped';
+        $tableClass = 'table zebra-striped';
         $head = $this->renderHead();
         $body = $this->renderBody();
         $foot = $this->renderFoot();

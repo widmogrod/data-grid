@@ -11,7 +11,11 @@ class ArrayObject extends AbstractAdapter
     {
         if (null === $this->data) {
             $adaptable = $this->getAdaptable();
-            $this->data = $adaptable;
+            if ($adaptable instanceof \ArrayObject) {
+                $this->data = $adaptable->getArrayCopy();
+            } else {
+                $this->data = (array) $adaptable;
+            }
         }
     }
 

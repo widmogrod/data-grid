@@ -46,6 +46,7 @@ class DataGrid
         'Doctrine\ORM\NativeQuery' => 'doctrine',
         'Doctrine\ORM\Query' => 'doctrine',
         'array' => 'ArrayObject',
+        'ArrayObject' => 'ArrayObject',
     );
 
     protected $specialColumns = array();
@@ -147,7 +148,9 @@ class DataGrid
 
     public function setRenderer(Renderer\RendererInterface $renderer)
     {
-        $renderer->setDataGrid($this);
+        if ($renderer instanceof DataGridAwareInterface) {
+            $renderer->setDataGrid($this);
+        }
         $this->renderer = $renderer;
     }
 

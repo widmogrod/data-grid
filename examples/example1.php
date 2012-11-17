@@ -7,9 +7,11 @@ $data = array(
     array('user' => 'widmogrod3'),
 );
 
-$grid = new \DataGrid\DataGrid($data, array(
-    'dataTypesToAdapter' => array('array' => 'ArrayObject'),
-    'invokableAdapters' => array('ArrayObject' => 'DataGrid\Adapter\ArrayObject')
-));
+//$options = array(
+//    'dataTypesToAdapter' => array('array' => 'ArrayObject'),
+//    'invokableAdapters' => array('ArrayObject' => 'DataGrid\Adapter\ArrayObject')
+//);
+$options = array();
+$grid = new \DataGrid\DataGrid($data, $options);
 $grid->setRenderer(new \DataGrid\Renderer\HtmlTable());
 echo $grid->render();
