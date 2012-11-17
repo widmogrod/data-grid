@@ -29,7 +29,20 @@ $dql = 'SELECT q FROM Question q JOIN q.answers';
 /* @var $q \Doctrine\ORM\Query */
 $q = $em->createQuery($dql);
 
-$grid = DataGrid::factory($q);
-$grid->setRenderer(new HtmlTable());
+$grid = DataGrid($q);
+$grid->setRenderer(new Renderer\HtmlTable());
+echo $grid->render();
+```
+
+### ArrayObject, array
+
+```php
+$data = array(
+    array('user' => 'widmogrod'),
+    array('user' => 'jhone'),
+    array('user' => 'jim'),
+);
+$grid = new DataGrid($data);
+$grid->setRenderer(new Renderer\HtmlTable());
 echo $grid->render();
 ```
