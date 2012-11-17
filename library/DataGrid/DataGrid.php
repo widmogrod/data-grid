@@ -11,12 +11,12 @@ class DataGrid
     const COLUMN = 'column';
 
     /**
-     * @var Adapter
+     * @var Adapter\AdapterInterface
      */
     protected $adapter;
 
     /**
-     * @var Renderer
+     * @var Renderer\RendererInterface
      */
     protected $renderer;
 
@@ -64,7 +64,7 @@ class DataGrid
             switch(strtolower($key))
             {
                 case 'adapter':
-                    throw new \InvalidArgumentException(sprintf('Option "%s" is reserwed keyword.', $key));
+                    throw new Exception\InvalidArgumentException(sprintf('Option "%s" is reserwed keyword.', $key));
             }
 
             $method = 'set' . ucfirst($key);
@@ -155,7 +155,7 @@ class DataGrid
                 }, $this->getSpecialColumns());
 
             default:
-                throw new \InvalidArgumentException(sprintf('Undefined type "%s"', $type));
+                throw new Exception\InvalidArgumentException(sprintf('Undefined type "%s"', $type));
         }
     }
 }

@@ -3,9 +3,11 @@
  * @author gabriel
  */
 
-namespace DataGrid;
+namespace DataGrid\Adapter;
 
-interface Adapter
+use DataGrid\DataGrid;
+
+interface AdapterInterface
 {
     public function __construct($adaptable);
 

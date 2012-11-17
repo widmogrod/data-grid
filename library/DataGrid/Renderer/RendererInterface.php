@@ -1,5 +1,7 @@
 <?php
-namespace DataGrid;
+namespace DataGrid\Renderer;
+
+use DataGrid\DataGrid;
 
 interface RendererInterface
 {
