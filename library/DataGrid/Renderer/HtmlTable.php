@@ -1,18 +1,18 @@
 <?php 
 namespace DataGrid\Renderer;
 
-use DataGrid\DataGrid;
+use DataGrid as Grid;
 
-class HtmlTable implements RendererInterface
+class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
 {
     /**
-     * @var \DataGrid\DataGrid
+     * @var Grid\DataGrid
      */
     protected $dataGrid;
 
     protected $columnsNames;
 
-    public function setDataGrid(DataGrid $dataGrid)
+    public function setDataGrid(Grid\DataGrid $dataGrid)
     {
         $this->dataGrid = $dataGrid;
     }

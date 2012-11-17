@@ -1,9 +1,9 @@
 <?php
 namespace DataGrid\Adapter;
 
-use DataGrid\DataGrid;
+use DataGrid as Grid;
 
-abstract class AbstractAdapter implements AdapterInterface
+abstract class AbstractAdapter implements AdapterInterface, Grid\DataGridAwareInterface
 {
     protected $adaptable;
 
@@ -16,7 +16,7 @@ abstract class AbstractAdapter implements AdapterInterface
         $this->adaptable = $adaptable;
     }
 
-    final public function setDataGrid(DataGrid $dataGrid)
+    final public function setDataGrid(Grid\DataGrid $dataGrid)
     {
         $this->dataGrid = $dataGrid;
     }

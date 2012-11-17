@@ -7,7 +7,7 @@ namespace DataGridTest;
 class DataGrid extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DataGrid
+     * @var \DataGrid\DataGrid
      */
     protected $object;
 
@@ -17,7 +17,7 @@ class DataGrid extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->object = new DataGrid();
+        $this->object = new \DataGrid\DataGrid();
     }
 
     /**
@@ -29,75 +29,29 @@ class DataGrid extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers DataGrid\DataGrid::factory
-     * @todo   Implement testFactory().
-     */
-    public function testFactory()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers DataGrid\DataGrid::getAdapter
-     * @todo   Implement testGetAdapter().
+     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
     public function testGetAdapter()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->getAdapter();
     }
 
     /**
      * @covers DataGrid\DataGrid::setRenderer
-     * @todo   Implement testSetRenderer().
      */
     public function testSetRenderer()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->setRenderer($this->getMock('DataGrid\Renderer\RendererInterface'));
     }
 
     /**
      * @covers DataGrid\DataGrid::getRenderer
-     * @todo   Implement testGetRenderer().
+     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
     public function testGetRenderer()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers DataGrid\DataGrid::setBaseUrl
-     * @todo   Implement testSetBaseUrl().
-     */
-    public function testSetBaseUrl()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers DataGrid\DataGrid::getBaseUrl
-     * @todo   Implement testGetBaseUrl().
-     */
-    public function testGetBaseUrl()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->getRenderer();
     }
 
     /**

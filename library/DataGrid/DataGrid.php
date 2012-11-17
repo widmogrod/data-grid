@@ -7,79 +7,142 @@ namespace DataGrid;
 
 class DataGrid
 {
+    /**
+     * Types of data elements
+     */
     const CELL = 'cell';
     const COLUMN = 'column';
 
     /**
+     * Provided data adapter
+     *
      * @var Adapter\AdapterInterface
      */
     protected $adapter;
 
     /**
+     * Rendering strategy
+     *
      * @var Renderer\RendererInterface
      */
     protected $renderer;
 
     /**
-     * @var string
+     * List of shipped with DataGrid data adapters
+     *
+     * @var array
      */
-    protected $baseUrl;
+    protected $invokableAdapters = array(
+        'doctrine' => 'DataGrid\Adapter\Doctrine',
+    );
+
+    /**
+     * List of data types that will be wrapped by predefined adapter
+     *
+     * @var array
+     */
+    protected $dataTypeToAdapter = array(
+        'Doctrine\ORM\NativeQuery' => 'doctrine',
+        'Doctrine\ORM\Query' => 'doctrine',
+    );
 
     protected $specialColumns = array();
 
-    final public static function factory($data, $options = null)
+    public function __construct($dataOrAdapter = null, array $options = null)
     {
-        switch(true)
-        {
-            case ($data instanceof \Doctrine\ORM\NativeQuery):
-            case ($data instanceof \Doctrine\ORM\Query):
-                $adapter = new \DataGrid\Adapter\Doctrine($data);
-                break;
-
-            default:
-                throw new \InvalidArgumentException(sprintf(
-                    'Data type "%s" is not suported',
-                    is_object($data) ? get_class($data) : gettype($data)
-                ));
+        if (null !== $dataOrAdapter) {
+            $this->setAdapter($dataOrAdapter);
         }
-
-        return new self($adapter, $options);
-    }
-
-    protected function __construct(Adapter $adapter, $options = null)
-    {
-        $adapter->setDataGrid($this);
-        $this->adapter = $adapter;
-
-        if (is_array($options) || $options instanceof \Traversable) {
+        if (null !== $options) {
             $this->setOptions($options);
         }
     }
 
     protected function setOptions($options)
     {
-        foreach($options as $key => $value)
-        {
-            $key = trim($key);
-            switch(strtolower($key))
-            {
-                case 'adapter':
-                    throw new Exception\InvalidArgumentException(sprintf('Option "%s" is reserwed keyword.', $key));
-            }
-
-            $method = 'set' . ucfirst($key);
+        $methodWithAddPrefix = array(
+            'invokableAdapters' => true,
+            'dataTypeToAdapter' => true,
+        );
+        foreach($options as $key => $value) {
+            $prefix =  isset($methodWithAddPrefix[$key]) ? 'add' : 'set';
+            $method = $prefix . ucfirst($key);
             if (method_exists($this, $method)) {
                 $this->$method($value);
             }
         }
     }
 
-    public function getAdapter()
-    {
-        return $this->adapter;
+    public function addInvokableAdapters(array $adapters) {
+        $this->invokableAdapters = array_merge(
+            $this->invokableAdapters,
+            $adapters
+        );
     }
 
-    public function setRenderer(Renderer $renderer)
+    public function addDataTypesToAdapter(array $dataTypesToAdapter) {
+        $this->dataTypeToAdapter = array_merge(
+            $this->dataTypeToAdapter,
+            $dataTypesToAdapter
+        );
+    }
+
+    public function setAdapter($dataOrAdapter)
+    {
+        if (!($dataOrAdapter instanceof Adapter\AdapterInterface))
+        {
+            $dataType = is_object($dataOrAdapter)
+                ? get_class($dataOrAdapter)
+                : gettype($dataOrAdapter);
+
+            if (!isset($this->dataTypeToAdapter[$dataType])) {
+                $message = 'Given data is not instance of "DataGrid\Adapter\AdapterInterface" ' .
+                           'and data type "%s" can\'t be wrapped by existing adapters (%s)';
+                $message = sprintf(
+                    $message,
+                    implode(', ', array_map(function($key, $value){
+                        return "$key => $value";
+                    }, array_keys($this->dataTypeToAdapter), $this->dataTypeToAdapter))
+                );
+                throw new Exception\InvalidArgumentException($message);
+            }
+
+            $adapterAlias = $this->dataTypeToAdapter[$dataType];
+            if (!isset($this->invokableAdapters[$adapterAlias])) {
+                $message = 'Given adapter alias "%s" for data type "%s" ' .
+                           'can\'t be wrapped by known adapters (%s)';
+                $message = sprintf(
+                    $message,
+                    $adapterAlias,
+                    $dataType,
+                    implode(', ', array_map(function($key, $value){
+                        return "$key => $value";
+                    }, array_keys($this->invokableAdapters), $this->invokableAdapters))
+                );
+                throw new Exception\InvalidArgumentException($message);
+            }
+
+            $dataOrAdapter = new $this->invokableAdapters[$adapterAlias]($dataOrAdapter);
+        }
+
+        if ($dataOrAdapter instanceof DataGridAwareInterface) {
+            $dataOrAdapter->setDataGrid($this);
+        }
+
+        $this->adapter = $dataOrAdapter;
+    }
+
+    public function getAdapter()
+    {
+        if (null !== $this->adapter) {
+            return $this->adapter;
+        }
+
+        $message = 'Adapter is not set';
+        throw new Exception\InvalidArgumentException($message);
+    }
+
+    public function setRenderer(Renderer\RendererInterface $renderer)
     {
         $renderer->setDataGrid($this);
         $this->renderer = $renderer;
@@ -87,17 +150,12 @@ class DataGrid
 
     public function getRenderer()
     {
-        return $this->renderer;
-    }
+        if (null !== $this->renderer) {
+            return $this->renderer;
+        }
 
-    public function setBaseUrl($baseUrl)
-    {
-        $this->baseUrl = $baseUrl;
-    }
-
-    public function getBaseUrl()
-    {
-        return $this->baseUrl;
+        $message = 'Renderer is not set';
+        throw new Exception\InvalidArgumentException($message);
     }
 
     public function toArray()
