@@ -34,7 +34,7 @@ class DataGrid
      */
     protected $invokableAdapters = array(
         'doctrine' => 'DataGrid\Adapter\Doctrine',
-        'array'    => 'ArrayObject',
+        'ArrayObject' => 'DataGrid\Adapter\ArrayObject',
     );
 
     /**
@@ -45,7 +45,7 @@ class DataGrid
     protected $dataTypeToAdapter = array(
         'Doctrine\ORM\NativeQuery' => 'doctrine',
         'Doctrine\ORM\Query' => 'doctrine',
-        'ArrayObject' => 'DataGrid\Adapter\ArrayObject',
+        'array' => 'ArrayObject',
     );
 
     protected $specialColumns = array();
