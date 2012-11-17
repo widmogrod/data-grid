@@ -1,14 +1,9 @@
 <?php
-/**
- * @author gabriel
- */
- 
 namespace DataGrid\Adapter;
 
-use DataGrid\Adapter;
 use DataGrid\DataGrid;
 
-abstract class AbstractAdapter implements Adapter
+abstract class AbstractAdapter implements AdapterInterface
 {
     protected $adaptable;
 

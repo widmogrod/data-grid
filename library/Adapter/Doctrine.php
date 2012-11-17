@@ -1,8 +1,4 @@
 <?php
-/**
- * @author gabriel
- */
- 
 namespace DataGrid\Adapter;
 
 class Doctrine extends AbstractAdapter

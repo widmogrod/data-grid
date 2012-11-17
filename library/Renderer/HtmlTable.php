@@ -1,14 +1,9 @@
-<?php
-/**
- * @author gabriel
- */
- 
+<?php 
 namespace DataGrid\Renderer;
 
-use DataGrid\Renderer;
 use DataGrid\DataGrid;
 
-class HtmlTable implements Renderer
+class HtmlTable implements RendererInterface
 {
     /**
      * @var \DataGrid\DataGrid

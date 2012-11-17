@@ -1,11 +1,7 @@
 <?php
-/**
- * @author gabriel
- */
- 
 namespace DataGrid;
 
-interface Renderer
+interface RendererInterface
 {
     public function setDataGrid(DataGrid $dataGrid);
 
