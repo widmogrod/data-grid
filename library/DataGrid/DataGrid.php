@@ -113,20 +113,28 @@ class DataGrid
 
             $adapterAlias = $this->dataTypeToAdapter[$dataType];
             if (!isset($this->invokableAdapters[$adapterAlias])) {
-                $message = 'Given adapter alias "%s" for data type "%s" ' .
-                           'can\'t be wrapped by known adapters (%s)';
-                $message = sprintf(
-                    $message,
-                    $adapterAlias,
-                    $dataType,
-                    implode(', ', array_map(function($key, $value){
-                        return "$key => $value";
-                    }, array_keys($this->invokableAdapters), $this->invokableAdapters))
-                );
-                throw new Exception\InvalidArgumentException($message);
+                if (!class_exists($adapterAlias)) {
+                    $message = 'Given adapter alias "%s" for data type "%s" ' .
+                                'can\'t be wrapped by known adapters (%s)';
+                    $message = sprintf(
+                        $message,
+                        $adapterAlias,
+                        $dataType,
+                        implode(', ', array_map(function($key, $value){
+                            return "$key => $value";
+                        }, array_keys($this->invokableAdapters), $this->invokableAdapters))
+                    );
+                    throw new Exception\InvalidArgumentException($message);
+                }
             }
 
             $dataOrAdapter = new $this->invokableAdapters[$adapterAlias]($dataOrAdapter);
+        }
+
+        if (!($dataOrAdapter instanceof Adapter\AdapterInterface)) {
+            $message = 'Data adapter "%s" is not instance of "Adapter\AdapterInterface"';
+            $message = sprintf($message, get_class($dataOrAdapter));
+            throw new Exception\InvalidArgumentException($message);
         }
 
         if ($dataOrAdapter instanceof DataGridAwareInterface) {
