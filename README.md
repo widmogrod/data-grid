@@ -31,7 +31,7 @@ Is written in PHP5.3 and is still in development process.
 
 
 ## How to use
-### Doctrine 2
+### with Doctrine 2
 
 ```php
 // select
@@ -44,7 +44,7 @@ $grid->setRenderer(new Renderer\HtmlTable());
 echo $grid->render();
 ```
 
-### ArrayObject, array
+### with ArrayObject, array
 
 ```php
 $data = array(
@@ -53,6 +53,24 @@ $data = array(
     array('user' => 'jim'),
 );
 $grid = new DataGrid($data);
+$grid->setRenderer(new Renderer\HtmlTable());
+echo $grid->render();
+```
+
+### with your own adapter
+
+```php
+// options to provide unknown adapter for new data types not supported by default in library
+$options = array(
+    'dataTypesToAdapter' => array('Zend\Db\ResultSet\ResultSet' => 'ZendDbResultSet'),
+    'invokableAdapters' => array('ZendDbResultSet' => 'My\DataGrid\Adapter\ResultSet')
+);
+
+// fetch result set
+/** @var $resultSet \Zend\Db\ResultSet\ResultSet */
+$resultSet = $this->select();
+
+$grid = new DataGrid($resultSet, $options);
 $grid->setRenderer(new Renderer\HtmlTable());
 echo $grid->render();
 ```
