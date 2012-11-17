@@ -89,7 +89,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
     {
         $result = array();
 
-        $specialCells = $this->dataGrid->getSpecialColumnsByType(DataGrid::CELL);
+        $specialCells = $this->dataGrid->getSpecialColumnsByType(Grid\DataGrid::CELL);
         foreach($specialCells as $name => $cell)
         {
             if ($cell instanceof \Closure)
@@ -109,7 +109,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
     {
         $result = array();
 
-        $specialColumns = $this->dataGrid->getSpecialColumnsByType(DataGrid::COLUMN);
+        $specialColumns = $this->dataGrid->getSpecialColumnsByType(Grid\DataGrid::COLUMN);
         foreach($specialColumns as $name => $column)
         {
             if ($column instanceof \Closure)

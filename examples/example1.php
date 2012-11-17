@@ -1,8 +1,15 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: gabrielhabryn
- * Date: 17.11.2012
- * Time: 14:57
- * To change this template use File | Settings | File Templates.
- */
+require_once 'Bootstrap.php';
+
+$data = array(
+    array('user' => 'widmogrod'),
+    array('user' => 'widmogrod2'),
+    array('user' => 'widmogrod3'),
+);
+
+$grid = new \DataGrid\DataGrid($data, array(
+    'dataTypesToAdapter' => array('array' => 'ArrayObject'),
+    'invokableAdapters' => array('ArrayObject' => 'DataGrid\Adapter\ArrayObject')
+));
+$grid->setRenderer(new \DataGrid\Renderer\HtmlTable());
+echo $grid->render();

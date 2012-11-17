@@ -34,6 +34,7 @@ class DataGrid
      */
     protected $invokableAdapters = array(
         'doctrine' => 'DataGrid\Adapter\Doctrine',
+        'array'    => 'ArrayObject',
     );
 
     /**
@@ -44,17 +45,18 @@ class DataGrid
     protected $dataTypeToAdapter = array(
         'Doctrine\ORM\NativeQuery' => 'doctrine',
         'Doctrine\ORM\Query' => 'doctrine',
+        'ArrayObject' => 'DataGrid\Adapter\ArrayObject',
     );
 
     protected $specialColumns = array();
 
     public function __construct($dataOrAdapter = null, array $options = null)
     {
-        if (null !== $dataOrAdapter) {
-            $this->setAdapter($dataOrAdapter);
-        }
         if (null !== $options) {
             $this->setOptions($options);
+        }
+        if (null !== $dataOrAdapter) {
+            $this->setAdapter($dataOrAdapter);
         }
     }
 
@@ -62,7 +64,7 @@ class DataGrid
     {
         $methodWithAddPrefix = array(
             'invokableAdapters' => true,
-            'dataTypeToAdapter' => true,
+            'dataTypesToAdapter' => true,
         );
         foreach($options as $key => $value) {
             $prefix =  isset($methodWithAddPrefix[$key]) ? 'add' : 'set';
@@ -100,6 +102,7 @@ class DataGrid
                            'and data type "%s" can\'t be wrapped by existing adapters (%s)';
                 $message = sprintf(
                     $message,
+                    $dataType,
                     implode(', ', array_map(function($key, $value){
                         return "$key => $value";
                     }, array_keys($this->dataTypeToAdapter), $this->dataTypeToAdapter))
