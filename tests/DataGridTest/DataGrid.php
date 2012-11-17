@@ -56,73 +56,73 @@ class DataGrid extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers DataGrid\DataGrid::toArray
-     * @todo   Implement testToArray().
+     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
-    public function testToArray()
+    public function testToArrayNoAdapter()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->toArray();
     }
 
     /**
      * @covers DataGrid\DataGrid::render
-     * @todo   Implement testRender().
+     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
-    public function testRender()
+    public function testRenderFailure()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->render();
     }
 
     /**
      * @covers DataGrid\DataGrid::setSpecialColumn
-     * @todo   Implement testSetSpecialColumn().
      */
     public function testSetSpecialColumn()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $result = $this->object->setSpecialColumn('menage', null);
+        $this->assertNull($result);
     }
 
     /**
      * @covers DataGrid\DataGrid::setSpecialColumns
-     * @todo   Implement testSetSpecialColumns().
+     * @dataProvider getSpecialColumnsProvider
      */
-    public function testSetSpecialColumns()
+    public function testSetSpecialColumns($columns)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $result = $this->object->setSpecialColumns($columns);
+        $this->assertNull($result);
+        $this->assertInternalType('array', $columns);
     }
 
     /**
      * @covers DataGrid\DataGrid::getSpecialColumns
-     * @todo   Implement testGetSpecialColumns().
+     * @dataProvider getSpecialColumnsProvider
      */
-    public function testGetSpecialColumns()
+    public function testGetSpecialColumns($columns)
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
+        $this->assertInternalType('array', $columns);
+        $this->object->setSpecialColumns($columns);
+        $result = $this->object->getSpecialColumns();
+        $this->assertEquals($columns, $result);
+    }
+
+    public function getSpecialColumnsProvider() {
+        return array(
+            'simple column' => array(
+                array(
+                    'edit_link' => array(
+                        'cell' => '/admin/link/edit',
+                        'column' => 'Edit link'
+                    )
+                )
+            ),
         );
     }
 
     /**
      * @covers DataGrid\DataGrid::getSpecialColumnsByType
-     * @todo   Implement testGetSpecialColumnsByType().
+     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
-    public function testGetSpecialColumnsByType()
+    public function testGetSpecialColumnsByTypeFailure()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
+        $this->object->getSpecialColumnsByType('non existing type');
     }
 }

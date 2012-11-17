@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="./Bootstrap.php" colors="true">
 	<testsuites>
 		<testsuite name="DataGrid Test Suite">
-			<directory>./</directory>
+			<directory>./DataGridTest/</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

@@ -190,7 +190,9 @@ class DataGrid
     public function setSpecialColumns(array $specialColumns)
     {
         $this->specialColumns = array();
-        array_walk(array($this, 'setSpecialColumn'), $specialColumns);
+        foreach ($specialColumns as $name => $options) {
+            $this->setSpecialColumn($name, $options);
+        }
     }
 
     public function getSpecialColumns()
@@ -213,7 +215,8 @@ class DataGrid
                 }, $this->getSpecialColumns());
 
             default:
-                throw new Exception\InvalidArgumentException(sprintf('Undefined type "%s"', $type));
+                $message = sprintf('Undefined type "%s"', $type);
+                throw new Exception\InvalidArgumentException($message);
         }
     }
 }
