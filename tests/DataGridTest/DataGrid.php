@@ -125,4 +125,36 @@ class DataGrid extends \PHPUnit_Framework_TestCase
     {
         $this->object->getSpecialColumnsByType('non existing type');
     }
+
+    /**
+     * @param $data
+     * @param $options
+     * @dataProvider getParamsForCreateMockAdapter
+     */
+    public function testCreateMockAdapter($data, $options, $expectedInstance)
+    {
+        $grid = new \DataGrid\DataGrid($data, $options);
+        $this->assertInstanceOf($expectedInstance, $grid->getAdapter());
+    }
+
+    public function getParamsForCreateMockAdapter()
+    {
+        return array(
+            'simple' => array(
+                new \My\Data\Mock(),
+                array(
+                    'dataTypesToAdapter' => array('My\Data\Mock' => 'My\Adapter\Mock'),
+                ),
+                'My\Adapter\Mock',
+            ),
+            'complex' => array(
+                new \My\Data\Mock(),
+                array(
+                    'dataTypesToAdapter' => array('My\Data\Mock' => 'MockAdapter'),
+                    'invokableAdapters' => array('MockAdapter' => 'My\Adapter\Mock')
+                ),
+                'My\Adapter\Mock',
+            )
+        );
+    }
 }

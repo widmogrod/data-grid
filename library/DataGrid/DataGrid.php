@@ -125,10 +125,14 @@ class DataGrid
                         }, array_keys($this->invokableAdapters), $this->invokableAdapters))
                     );
                     throw new Exception\InvalidArgumentException($message);
+                } else {
+                    $adapterClass = $adapterAlias;
                 }
+            } else {
+                $adapterClass = $this->invokableAdapters[$adapterAlias];
             }
 
-            $dataOrAdapter = new $this->invokableAdapters[$adapterAlias]($dataOrAdapter);
+            $dataOrAdapter = new $adapterClass($dataOrAdapter);
         }
 
         if (!($dataOrAdapter instanceof Adapter\AdapterInterface)) {
