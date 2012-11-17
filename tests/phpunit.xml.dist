@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./Bootstrap.php" colors="true">
-	<testsuites>
-		<testsuite name="DataGrid Test Suite">
-			<directory>./DataGridTest/</directory>
-		</testsuite>
-	</testsuites>
+<phpunit bootstrap="Bootstrap.php"
+         colors="true"
+         verbose="true"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         stopOnFailure="false">
+
+    <testsuites>
+        <testsuite name="data-grid library">
+            <directory suffix=".php">./DataGridTest/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../library/</directory>
+        </whitelist>
+    </filter>
 </phpunit>
