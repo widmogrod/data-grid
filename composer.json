@@ -1,0 +1,24 @@
+{
+	"name": "widmogrod/DataGrid",
+	"type": "library",
+	"description": "DataGrid is simple library for presentation different kinds of tabular data",
+	"keywords": ["datagrid",""],
+	"homepage": "https://github.com/widmogrod/DataGrid",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Gabriel Habryn",
+			"email": "widmogrod@gmail.com",
+			"homepage": "http://blog.widmogrod.info",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.3"
+	},
+	"autoload": {
+		"psr-0": {
+			"DataGrid": "src"
+		}
+	}
+}
