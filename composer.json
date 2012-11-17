@@ -1,9 +1,9 @@
 {
-	"name": "widmogrod/DataGrid",
+	"name": "widmogrod/data-grid",
 	"type": "library",
 	"description": "DataGrid is simple library for presentation different kinds of tabular data",
-	"keywords": ["datagrid",""],
-	"homepage": "https://github.com/widmogrod/DataGrid",
+	"keywords": ["datagrid","doctrine","zend db","array"],
+	"homepage": "https://github.com/widmogrod/data-grid",
 	"license": "MIT",
 	"authors": [
 		{
