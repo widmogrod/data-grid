@@ -4,6 +4,8 @@
 DataGrid is simple library for presentation different kinds of tabular data.
 Is written in PHP5.3 and is still in development process.
 
+If you wish to help me with this project or correct my english description - your help will be more than appreciated  :)
+
 ## Project road map
 
   * Features:
