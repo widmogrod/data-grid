@@ -1,7 +1,9 @@
 <?php
 namespace DataGrid\Event;
 
-interface ListenerInterface
+interface ManagerInterface
 {
-    public function attach(ManagerInterface $manager);
+    public function trigger(EventInterface $event);
+
+    public function attach($listenerOrEvent, $listenerOrCallback = null);
 }

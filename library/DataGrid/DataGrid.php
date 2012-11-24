@@ -5,6 +5,12 @@
 
 namespace DataGrid;
 
+use DataGrid\Event\ManagerInterface;
+use DataGrid\Event\Manager;
+use DataGrid\Event\ListenerInterface;
+use DataGrid\StateStorage\StateStorageInterface;
+use DataGrid\StateStorage\Get;
+
 class DataGrid
 {
     /**
@@ -26,6 +32,20 @@ class DataGrid
      * @var Renderer\RendererInterface
      */
     protected $renderer;
+
+    /**
+     * Event manager
+     *
+     * @var ManagerInterface
+     */
+    protected $eventManager;
+
+    /**
+     * Data grid state storage
+     *
+     * @var StateStorageInterface
+     */
+    protected $stateStorage;
 
     /**
      * List of shipped with DataGrid data adapters
@@ -145,6 +165,10 @@ class DataGrid
             $dataOrAdapter->setDataGrid($this);
         }
 
+        if ($dataOrAdapter instanceof ListenerInterface) {
+            $this->getEventManager()->attach($dataOrAdapter);
+        }
+
         $this->adapter = $dataOrAdapter;
     }
 
@@ -162,6 +186,9 @@ class DataGrid
     {
         if ($renderer instanceof DataGridAwareInterface) {
             $renderer->setDataGrid($this);
+        }
+        if ($renderer instanceof ListenerInterface) {
+            $this->getEventManager()->attach($renderer);
         }
         $this->renderer = $renderer;
     }
@@ -183,6 +210,8 @@ class DataGrid
 
     public function render()
     {
+        $e = new Event\Event('render', $this);
+        $this->getEventManager()->trigger($e);
         return $this->getRenderer()->render();
     }
 
@@ -236,5 +265,46 @@ class DataGrid
                 $message = sprintf('Undefined type "%s"', $type);
                 throw new Exception\InvalidArgumentException($message);
         }
+    }
+
+    /**
+     * @param \DataGrid\Event\ManagerInterface $eventManager
+     */
+    public function setEventManager(ManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * @return \DataGrid\Event\ManagerInterface
+     */
+    public function getEventManager()
+    {
+        if (null === $this->eventManager) {
+            $this->eventManager = new Manager();
+        }
+        return $this->eventManager;
+    }
+
+    /**
+     * @param \DataGrid\StateStorage\StateStorageInterface $stateStorage
+     */
+    public function setStateStorage(StateStorageInterface $stateStorage)
+    {
+        if ($stateStorage instanceof DataGridAwareInterface) {
+            $stateStorage->setDataGrid($this);
+        }
+        $this->stateStorage = $stateStorage;
+    }
+
+    /**
+     * @return \DataGrid\StateStorage\StateStorageInterface
+     */
+    public function getStateStorage()
+    {
+        if (null === $this->stateStorage) {
+            $this->setStateStorage(new Get());
+        }
+        return $this->stateStorage;
     }
 }

@@ -15,7 +15,7 @@ interface AdapterInterface
 
     public function fetchData();
 
-    public function getTotalRecord();
+    public function getTotalRecordsNumber();
 
     public function getColumnsInfo();
 

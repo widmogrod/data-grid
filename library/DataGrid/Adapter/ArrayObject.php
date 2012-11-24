@@ -1,11 +1,25 @@
 <?php
 namespace DataGrid\Adapter;
 
-class ArrayObject extends AbstractAdapter
+use DataGrid\Event\ManagerInterface;
+use DataGrid\Event\ListenerInterface;
+
+class ArrayObject extends AbstractAdapter implements ListenerInterface
 {
     protected $totalRecord;
 
     protected $columnInfo;
+
+    public function attach(ManagerInterface $manager)
+    {
+        $manager->attach('render', array($this, 'onRender'));
+    }
+
+    public function onRender(\DataGrid\Event\Event $e)
+    {
+        $state = $e->getDataGrid()->getStateStorage();
+        $state->getItemsPerPage();
+    }
 
     public function fetchData()
     {
@@ -39,7 +53,7 @@ class ArrayObject extends AbstractAdapter
         return $this->columnInfo;
     }
 
-    public function getTotalRecord()
+    public function getTotalRecordsNumber()
     {
         if (null === $this->totalRecord)
         {

@@ -1,8 +1,9 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: gabrielhabryn
- * Date: 24.11.2012
- * Time: 18:36
- * To change this template use File | Settings | File Templates.
- */
+namespace DataGrid\StateStorage;
+
+class Get extends AbstractStateStorage
+{
+    public function __construct($namespace = null) {
+        $this->container = & $_GET;
+    }
+}

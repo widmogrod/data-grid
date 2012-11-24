@@ -1,44 +1,81 @@
 <?php
 namespace DataGrid\StateStorage;
 
-abstract AbstractStateStorage implements StateStorageInterface
+abstract class AbstractStateStorage implements StateStorageInterface
 {
-    protected $pageNumber;
-    protected $itemsPerPage;
-    protected $actions;
+    protected $container = array();
+
+    public function set($key, $value)
+    {
+        $this->container[$key] = $value;
+    }
+
+    public function has($key)
+    {
+        return array_key_exists($key, $this->container);
+    }
+
+    public function merge($key, array $value)
+    {
+        if ($this->has($key)) {
+            $baseValue = (array) $this->get($key);
+            $value = array_merge($baseValue, $value);
+            $this->set($key, $value);
+        }
+
+        $this->set($key, $value);
+    }
+
+    public function get($key, $default = null)
+    {
+        return $this->has($key)
+            ? $this->container[$key]
+            : $default;
+    }
 
     public function setPageNumber($number)
     {
-        $this->pageNumber = (int) $number;
+        $this->set('pageNumber', (int) $number);
     }
 
     public function getPageNumber()
     {
-        return $this->pageNumber;
+        return $this->get('pageNumber');
     }
 
     public function setItemsPerPage($number)
     {
-        $this->itemsPerPage = (int) $number;
+        $this->set('itemsPerPage', (int) $number);
     }
 
     public function getItemsPerPage()
     {
-        return $this->itemsPerPage;
+        return $this->get('itemsPerPage');
     }
 
     public function setColumnAction($columnName, $action, $value)
     {
-        if (!isset($this->actions[$columnName])) {
-            $this->actions[$columnName] = array();
-        }
-        $this->actions[$columnName][$action] = $value;
+        $this->merge('actions', array($columnName => array($action => $value)));
     }
 
     public function getColumnActions($columnName, $default = array())
     {
-        return isset($this->actions[$columnName])
-            ? $this->actions[$columnName]
-            : $default;
+        $actions = $this->get('actions', array());
+
+        return isset($actions[$columnName])
+            ? $actions[$columnName]
+            : array();
     }
+
+    public function getArrayCopy()
+    {
+        $this->container;
+    }
+
+    public function exchangeArray(array $array)
+    {
+        $this->container = $array;
+    }
+
+
 }

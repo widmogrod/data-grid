@@ -12,7 +12,7 @@ class Mock extends AbstractAdapter
         }
     }
 
-    public function getTotalRecord()
+    public function getTotalRecordsNumber()
     {
         $this->fetchData();
         return count($this->data);

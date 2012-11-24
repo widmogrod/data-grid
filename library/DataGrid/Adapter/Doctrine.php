@@ -44,7 +44,7 @@ class Doctrine extends AbstractAdapter
         return $this->columnInfo;
     }
 
-    public function getTotalRecord()
+    public function getTotalRecordsNumber()
     {
         if (null === $this->totalRecord)
         {
