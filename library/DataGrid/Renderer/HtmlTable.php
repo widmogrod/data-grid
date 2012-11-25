@@ -50,7 +50,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
 
     private function getColumnNames()
     {
-        if (null === $this->columnsNames)
+        if (array() === $this->columnsNames)
         {
             $this->columnsNames = array();
             $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
@@ -90,7 +90,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
             // create table with aliases
             // this allow array_merge with named spacial columns
             // to merge completely... ie. special column can swap with row cell.
-            $row = array_merge($columnNames, $row);
+            $row = array_combine($columnNames, $row);
             $specialCells = $this->renderSpecialCell($row);
             $row = array_merge($row, $specialCells);
             $cells = sprintf('<td>%s</td>', implode('</td><td>', $row));
