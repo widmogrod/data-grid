@@ -1,49 +1,13 @@
 <?php
 namespace DataGrid\Adapter;
 
-use DataGrid\Event\ManagerInterface;
-use DataGrid\Event\ListenerInterface;
-use DataGrid\Event\EventInterface;
-use DataGrid\Event\GridEvent;
-
-class ArrayObject extends AbstractAdapter implements ListenerInterface
+class ArrayObject extends AbstractAdapter
 {
-    protected $totalRecord;
-
-    protected $columnInfo;
-
-    public function attach(ManagerInterface $manager)
-    {
-        $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'));
-    }
-
-    public function onExecute(EventInterface $e)
-    {
-        $stateStorage = $e->getDataGrid()->getStateStorage();
-
-        $this->changeItemsPerPage($stateStorage->getItemsPerPage());
-        $this->changePageNumber($stateStorage->getPageNumber());
-
-        foreach ($this->getColumnsInfo() as $column) {
-            $actions = $stateStorage->getColumnActions($column->getName());
-            $this->triggerActionOnColumn($column->getName(), $actions);
-        }
-    }
-
-    protected function changePageNumber($number)
-    {
-
-    }
-
-    protected function changeItemsPerPage($number)
-    {
-
-    }
-
-    protected function triggerActionOnColumn($column, array $actions) {
-
-    }
-
+    /**
+     * Fetch data from adaptable object|resource|type
+     *
+     * @return void
+     */
     public function fetchData()
     {
         if (null === $this->data) {
@@ -79,6 +43,11 @@ class ArrayObject extends AbstractAdapter implements ListenerInterface
         return $this->columnInfo;
     }
 
+    /**
+     * Get total records number
+     *
+     * @return int
+     */
     public function getTotalRecordsNumber()
     {
         if (null === $this->totalRecord)
