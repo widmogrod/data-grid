@@ -2,26 +2,33 @@
 namespace DataGrid\Renderer;
 
 use DataGrid as Grid;
-use DataGrid\Event\ListenerInterface;
-use DataGrid\Event\ManagerInterface;
-use DataGrid\Event\EventInterface;
-use DataGrid\Event\GridEvent;
+use DataGrid\EventManager\ListenerInterface;
+use DataGrid\EventManager\EventManagerInterface;
+use DataGrid\EventManager\EventInterface;
+use DataGrid\EventManager\GridEvent;
 
 class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, ListenerInterface
 {
     /**
+     * Data grid object
+     *
      * @var Grid\DataGrid
      */
     protected $dataGrid;
 
-    protected $columnsNames;
+    /**
+     * Column names
+     *
+     * @var string[]
+     */
+    protected $columnsNames = array();
 
     public function setDataGrid(Grid\DataGrid $dataGrid)
     {
         $this->dataGrid = $dataGrid;
     }
 
-    public function attach(ManagerInterface $manager)
+    public function attach(EventManagerInterface $manager)
     {
         $manager->attach(GridEvent::EVENT_RENDER, array($this, 'onRender'), -100);
     }
@@ -41,25 +48,17 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
         return $this->render();
     }
 
-    private function renderBody()
+    private function getColumnNames()
     {
-        $rowset = $this->dataGrid->getAdapter()->toArray();
-        $columnName = $this->getColumnNames();
-
-        $rows = array();
-        while($row = array_shift($rowset))
+        if (null === $this->columnsNames)
         {
-            // create table with aliases
-            // this allow array_merge with named spacial columns
-            // to merge completely... ie. special column can swap with row cell.
-            $row = array_combine($columnName, $row);
-            $specialCells = $this->renderSpecialCell($row);
-            $row = array_merge($row, $specialCells);
-            $cells = sprintf('<td>%s</td>', implode('</td><td>', $row));
-            $rows[] = sprintf('<tr>%s</tr>', $cells);
+            $this->columnsNames = array();
+            $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
+            foreach ($columns as $column) {
+                $this->columnsNames[] = $column->getName();
+            }
         }
-
-        return implode("\n", $rows);
+        return $this->columnsNames;
     }
 
     private function renderHead()
@@ -80,17 +79,25 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
         return sprintf('<tr>%s</tr>', $rows);
     }
 
-    private function getColumnNames()
+    private function renderBody()
     {
-        if (null === $this->columnsNames)
+        $rowset = $this->dataGrid->getAdapter()->toArray();
+        $columnNames = $this->getColumnNames();
+
+        $rows = array();
+        while($row = array_shift($rowset))
         {
-            $this->columnsNames = array();
-            $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
-            foreach ($columns as $column) {
-                $this->columnsNames[] = $column->getName();
-            }
+            // create table with aliases
+            // this allow array_merge with named spacial columns
+            // to merge completely... ie. special column can swap with row cell.
+            $row = array_merge($columnNames, $row);
+            $specialCells = $this->renderSpecialCell($row);
+            $row = array_merge($row, $specialCells);
+            $cells = sprintf('<td>%s</td>', implode('</td><td>', $row));
+            $rows[] = sprintf('<tr>%s</tr>', $cells);
         }
-        return $this->columnsNames;
+
+        return implode("\n", $rows);
     }
 
     private function renderFoot()

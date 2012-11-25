@@ -1,7 +1,7 @@
 <?php
 namespace DataGrid\Adapter;
 
-use DataGrid\Event\AdapterEvent;
+use DataGrid\EventManager\AdapterEvent;
 
 class ArrayObject extends AbstractAdapter
 {
@@ -69,7 +69,7 @@ class ArrayObject extends AbstractAdapter
     /**
      * Allow adapter to handle a change of state of a column actions.
      *
-     * @param \DataGrid\Event\AdapterEvent $e
+     * @param \DataGrid\EventManager\AdapterEvent $e
      * @return void
      */
     public function onAction(AdapterEvent $e)

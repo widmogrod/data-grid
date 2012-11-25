@@ -1,5 +1,5 @@
 <?php
-namespace DataGrid\Event\Result;
+namespace DataGrid\EventManager\Result;
 
 interface ResultInterface extends \Iterator, \Countable
 {

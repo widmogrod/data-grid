@@ -1,10 +1,10 @@
 <?php
-namespace DataGrid\Event;
+namespace DataGrid\EventManager;
 
 use DataGrid\Exception;
 use SplPriorityQueue as PriorityQueue;
 
-class Manager implements ManagerInterface
+class EventManager implements EventManagerInterface
 {
     /**
      * Collection of listeners
@@ -58,7 +58,7 @@ class Manager implements ManagerInterface
                 ? get_class($listenerOrEvent)
                 : gettype($listenerOrEvent);
 
-            $message = 'Event is not set or listener is not instance of "DataGrid\Event\ListenerInterface" or is not callable. ';
+            $message = 'Event is not set or listener is not instance of "DataGrid\EventManager\ListenerInterface" or is not callable. ';
             $message .= 'Listener type given: %s';
             $message = sprintf($message, $type);
 

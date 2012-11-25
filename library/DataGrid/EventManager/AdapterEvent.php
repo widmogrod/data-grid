@@ -1,5 +1,5 @@
 <?php
-namespace DataGrid\Event;
+namespace DataGrid\EventManager;
 
 use DataGrid\DataGrid;
 use DataGrid\Adapter\ColumnInfo\ColumnInfoInterface;

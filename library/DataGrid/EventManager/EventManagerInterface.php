@@ -1,7 +1,7 @@
 <?php
-namespace DataGrid\Event;
+namespace DataGrid\EventManager;
 
-interface ManagerInterface
+interface EventManagerInterface
 {
     /**
      * Trigger event

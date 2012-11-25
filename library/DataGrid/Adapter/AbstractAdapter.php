@@ -2,10 +2,10 @@
 namespace DataGrid\Adapter;
 
 use DataGrid as Grid;
-use DataGrid\Event\ManagerInterface;
-use DataGrid\Event\ListenerInterface;
-use DataGrid\Event\AdapterEvent;
-use DataGrid\Event\GridEvent;
+use DataGrid\EventManager\EventManagerInterface;
+use DataGrid\EventManager\ListenerInterface;
+use DataGrid\EventManager\AdapterEvent;
+use DataGrid\EventManager\GridEvent;
 
 abstract class AbstractAdapter
     implements AdapterInterface, Grid\DataGridAwareInterface, ListenerInterface
@@ -133,10 +133,10 @@ abstract class AbstractAdapter
     /**
      * Attache events to event manager
      *
-     * @param ManagerInterface $manager
+     * @param EventManagerInterface $manager
      * @return void
      */
-    public function attach(ManagerInterface $manager)
+    public function attach(EventManagerInterface $manager)
     {
         $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'), 10);
         $manager->attach(AdapterEvent::EVENT_ACTION, array($this, 'onAction'), -1000);
@@ -145,7 +145,7 @@ abstract class AbstractAdapter
     /**
      * Prepare adapter
      *
-     * @param \DataGrid\Event\GridEvent $e
+     * @param \DataGrid\EventManager\GridEvent $e
      */
     public function onExecute(GridEvent $e)
     {
@@ -173,7 +173,7 @@ abstract class AbstractAdapter
     /**
      * Allow adapter to handle a change of state of a column actions.
      *
-     * @param \DataGrid\Event\AdapterEvent $e
+     * @param \DataGrid\EventManager\AdapterEvent $e
      * @return void
      */
     abstract public function onAction(AdapterEvent $e);

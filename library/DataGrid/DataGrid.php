@@ -5,9 +5,11 @@
 
 namespace DataGrid;
 
-use DataGrid\Event\ManagerInterface;
-use DataGrid\Event\Manager;
-use DataGrid\Event\ListenerInterface;
+use DataGrid\EventManager\EventManagerInterface;
+use DataGrid\EventManager\EventManager;
+use DataGrid\EventManager\GridEvent;
+use DataGrid\EventManager\Result\ResultInterface;
+use DataGrid\EventManager\ListenerInterface;
 use DataGrid\StateStorage\StateStorageInterface;
 use DataGrid\StateStorage\Get;
 
@@ -40,7 +42,7 @@ class DataGrid
     /**
      * Event manager
      *
-     * @var ManagerInterface
+     * @var EventManagerInterface
      */
     protected $eventManager;
 
@@ -175,7 +177,7 @@ class DataGrid
 
         $this->adapter = $dataOrAdapter;
 
-        $this->triggerEvent(Event\GridEvent::EVENT_ADAPTER_SET);
+        $this->triggerEvent(GridEvent::EVENT_ADAPTER_SET);
     }
 
     public function getAdapter()
@@ -199,7 +201,7 @@ class DataGrid
 
         $this->renderer = $renderer;
 
-        $this->triggerEvent(Event\GridEvent::EVENT_RENDERER_SET);
+        $this->triggerEvent(GridEvent::EVENT_RENDERER_SET);
     }
 
     public function getRenderer()
@@ -214,16 +216,16 @@ class DataGrid
 
     public function toArray()
     {
-        $this->triggerEvent(Event\GridEvent::EVENT_EXECUTE);
+        $this->triggerEvent(GridEvent::EVENT_EXECUTE);
 
         return $this->getAdapter()->toArray();
     }
 
     public function render()
     {
-        $this->triggerEvent(Event\GridEvent::EVENT_EXECUTE);
+        $this->triggerEvent(GridEvent::EVENT_EXECUTE);
 
-        return $this->triggerEvent(Event\GridEvent::EVENT_RENDER)->last();
+        return $this->triggerEvent(GridEvent::EVENT_RENDER)->last();
     }
 
     public function setSpecialColumn($columnName, $columnOptions)
@@ -280,20 +282,20 @@ class DataGrid
     }
 
     /**
-     * @param \DataGrid\Event\ManagerInterface $eventManager
+     * @param \DataGrid\EventManager\EventManagerInterface $eventManager
      */
-    public function setEventManager(ManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
         $this->eventManager = $eventManager;
     }
 
     /**
-     * @return \DataGrid\Event\ManagerInterface
+     * @return \DataGrid\EventManager\EventManagerInterface
      */
     public function getEventManager()
     {
         if (null === $this->eventManager) {
-            $this->eventManager = new Manager();
+            $this->eventManager = new EventManager();
             $this->registerDefaultListeners();
         }
         return $this->eventManager;
@@ -303,7 +305,7 @@ class DataGrid
      * Set event listeners collection
      *
      * @param ListenerInterface[] $listeners
-     * @throws Exception\InvalidArgumentException when listener in collection is not instance of DataGrid\Event\ListenerInterface
+     * @throws Exception\InvalidArgumentException when listener in collection is not instance of DataGrid\EventManager\ListenerInterface
      */
     public function setListeners(array $listeners)
     {
@@ -312,7 +314,7 @@ class DataGrid
             if ($listener instanceof ListenerInterface) {
                 $em->attach($listener);
             } else {
-                $message = 'Listener is not instance of "DataGrid\Event\ListenerInterface"';
+                $message = 'Listener is not instance of "DataGrid\EventManager\ListenerInterface"';
                 throw new Exception\InvalidArgumentException($message);
             }
         }
@@ -321,12 +323,12 @@ class DataGrid
     public function registerDefaultListeners()
     {
 //        $this->eventManager->attach(
-//            Event\GridEvent::EVENT_EXECUTE,
+//            GridEvent::EVENT_EXECUTE,
 //            function($e) {
 //                $filterEvent = new Event\AdapterEvent('action');
 //                $filterEvent->setAction('');
 //
-//                /** @var $e \DataGrid\Event\GridEvent */
+//                /** @var $e \DataGrid\EventManager\GridEvent */
 //                $em = $e->getDataGrid()->getEventManager();
 //                $em->trigger();
 //            }
@@ -343,7 +345,7 @@ class DataGrid
         }
         $this->stateStorage = $stateStorage;
 
-        $this->triggerEvent(Event\GridEvent::EVENT_STATE_STORAGE_SET);
+        $this->triggerEvent(GridEvent::EVENT_STATE_STORAGE_SET);
     }
 
     /**
@@ -361,11 +363,11 @@ class DataGrid
      * Trigger grid event $name.
      *
      * @param string $name
-     * @return Event\Result\ResultInterface
+     * @return ResultInterface
      */
     protected function triggerEvent($name)
     {
-        $e = new Event\GridEvent($name, $this);
+        $e = new GridEvent($name, $this);
         return $this->getEventManager()->trigger($e);
     }
 }

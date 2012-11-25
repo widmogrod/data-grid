@@ -2,6 +2,7 @@
 namespace My\Adapter;
 
 use DataGrid\Adapter\AbstractAdapter;
+use DataGrid\EventManager\AdapterEvent;
 
 class Mock extends AbstractAdapter
 {
@@ -21,5 +22,16 @@ class Mock extends AbstractAdapter
     public function getColumnsInfo()
     {
         return array();
+    }
+
+    /**
+     * Allow adapter to handle a change of state of a column actions.
+     *
+     * @param \DataGrid\EventManager\AdapterEvent $e
+     * @return void
+     */
+    public function onAction(AdapterEvent $e)
+    {
+
     }
 }

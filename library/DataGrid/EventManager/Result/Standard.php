@@ -1,5 +1,5 @@
 <?php
-namespace DataGrid\Event\Result;
+namespace DataGrid\EventManager\Result;
 
 class Standard implements ResultInterface
 {
