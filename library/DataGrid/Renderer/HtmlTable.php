@@ -23,7 +23,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
 
     public function attach(ManagerInterface $manager)
     {
-        $manager->attach(GridEvent::EVENT_RENDER, array($this, 'onRender'));
+        $manager->attach(GridEvent::EVENT_RENDER, array($this, 'onRender'), -100);
     }
 
     public function render()
@@ -51,7 +51,7 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, Liste
         {
             // create table with aliases
             // this allow array_merge with named spacial columns
-            // to merge commplitly... ie. special column can swap with row cell.
+            // to merge completely... ie. special column can swap with row cell.
             $row = array_combine($columnName, $row);
             $specialCells = $this->renderSpecialCell($row);
             $row = array_merge($row, $specialCells);

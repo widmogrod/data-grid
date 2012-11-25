@@ -6,13 +6,6 @@ use DataGrid\DataGrid;
 interface EventInterface
 {
     /**
-     * Get data grid object
-     *
-     * @return DataGrid
-     */
-    public function getDataGrid();
-
-    /**
      * Get event name
      *
      * @return string
@@ -33,4 +26,28 @@ interface EventInterface
      * @return bool
      */
     public function isStopped();
+
+    /**
+     * Set param
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+    public function setParam($name, $value);
+
+    /**
+     * Get param
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getParam($name);
+
+    /**
+     * Return array of params
+     *
+     * @return array
+     */
+    public function getParams();
 }

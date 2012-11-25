@@ -11,9 +11,4 @@ $data = array(
 );
 $grid = new \DataGrid\DataGrid($data);
 $grid->setRenderer(new \DataGrid\Renderer\HtmlTable());
-$grid->setSpecialColumn('user', array(
-    'actions' => array(
-        'order' => 'desc'
-    ),
-));
 echo $grid->render();

@@ -1,6 +1,8 @@
 <?php
 namespace DataGrid\Adapter;
 
+use DataGrid\Event\AdapterEvent;
+
 class ArrayObject extends AbstractAdapter
 {
     /**
@@ -17,6 +19,10 @@ class ArrayObject extends AbstractAdapter
             } else {
                 $this->data = (array) $adaptable;
             }
+
+            $page = $this->getPageNumber() - 1;
+            $limit = $this->getItemsPerPage();
+            $this->data = array_splice($this->data, $page * $limit, $limit);
         }
     }
 
@@ -30,7 +36,8 @@ class ArrayObject extends AbstractAdapter
         if (null === $this->columnInfo)
         {
             $this->columnInfo = array();
-            if ($rowset = $this->toArray())
+            $rowset = $this->getAdaptable();
+            if ($rowset)
             {
                 $row = current($rowset);
                 $row = array_keys($row);
@@ -57,5 +64,37 @@ class ArrayObject extends AbstractAdapter
         }
 
         return $this->totalRecord;
+    }
+
+    /**
+     * Allow adapter to handle a change of state of a column actions.
+     *
+     * @param \DataGrid\Event\AdapterEvent $e
+     * @return void
+     */
+    public function onAction(AdapterEvent $e)
+    {
+        if ($e->getAdapter() !== $this) {
+            return;
+        }
+
+        $columnName = $e->getColumn()->getName();
+
+        switch ($e->getAction())
+        {
+            case 'order':
+                $adaptable = $e->getAdapter()->getAdaptable();
+
+                $orderColumn = array();
+                foreach ($adaptable as $key => $value) {
+                    $orderColumn[$key] = $value[$columnName];
+                }
+                $order = ($e->getValue() != 'asc') ? SORT_DESC : SORT_ASC;
+                array_multisort($orderColumn, $order, $adaptable);
+
+                // update adaptable array
+                $this->adaptable = $adaptable;
+                break;
+        }
     }
 }

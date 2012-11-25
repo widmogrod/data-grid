@@ -4,7 +4,7 @@ namespace DataGrid\Adapter;
 use DataGrid as Grid;
 use DataGrid\Event\ManagerInterface;
 use DataGrid\Event\ListenerInterface;
-use DataGrid\Event\EventInterface;
+use DataGrid\Event\AdapterEvent;
 use DataGrid\Event\GridEvent;
 
 abstract class AbstractAdapter
@@ -36,14 +36,14 @@ abstract class AbstractAdapter
      *
      * @var integer
      */
-    protected $itemsPerPage;
+    protected $itemsPerPage = 10;
 
     /**
      * Page number
      *
      * @var integer
      */
-    protected $pageNumber;
+    protected $pageNumber = 1;
 
     /**
      * Columns info
@@ -91,38 +91,13 @@ abstract class AbstractAdapter
     }
 
     /**
-     * Attache events to event manager
-     *
-     * @param ManagerInterface $manager
-     * @return void
-     */
-    public function attach(ManagerInterface $manager)
-    {
-        $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'), 10);
-        $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'), -10);
-    }
-
-    public function onExecute(EventInterface $e)
-    {
-        $stateStorage = $e->getDataGrid()->getStateStorage();
-
-        $this->setItemsPerPage($stateStorage->getItemsPerPage());
-        $this->setPageNumber($stateStorage->getPageNumber());
-
-        foreach ($this->getColumnsInfo() as $column) {
-            $actions = $stateStorage->getColumnActions($column->getName());
-            $this->triggerActionOnColumn($column->getName(), $actions);
-        }
-    }
-
-    /**
      * Set items per page
      *
      * @param int $itemsPerPage
      */
     public function setItemsPerPage($itemsPerPage)
     {
-        $this->itemsPerPage = $itemsPerPage;
+        $this->itemsPerPage = ($itemsPerPage > 0) ? $itemsPerPage : 10;
     }
 
     /**
@@ -142,7 +117,7 @@ abstract class AbstractAdapter
      */
     public function setPageNumber($pageNumber)
     {
-        $this->pageNumber = $pageNumber;
+        $this->pageNumber = ($pageNumber > 0) ? $pageNumber : 1;
     }
 
     /**
@@ -154,4 +129,52 @@ abstract class AbstractAdapter
     {
         return $this->pageNumber;
     }
+
+    /**
+     * Attache events to event manager
+     *
+     * @param ManagerInterface $manager
+     * @return void
+     */
+    public function attach(ManagerInterface $manager)
+    {
+        $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'), 10);
+        $manager->attach(AdapterEvent::EVENT_ACTION, array($this, 'onAction'), -1000);
+    }
+
+    /**
+     * Prepare adapter
+     *
+     * @param \DataGrid\Event\GridEvent $e
+     */
+    public function onExecute(GridEvent $e)
+    {
+        $eventManager = $e->getDataGrid()->getEventManager();
+        $stateStorage = $e->getDataGrid()->getStateStorage();
+
+        $this->setItemsPerPage($stateStorage->getItemsPerPage());
+        $this->setPageNumber($stateStorage->getPageNumber());
+
+        foreach ($this->getColumnsInfo() as $column) {
+            $actions = $stateStorage->getColumnActions($column->getName());
+            foreach ($actions as $action => $value) {
+                // prepare event
+                $e = new AdapterEvent();
+                $e->setColumn($column);
+                $e->setAction($action);
+                $e->setValue($value);
+                $e->setAdapter($this);
+                // trigger
+                $eventManager->trigger($e);
+            }
+        }
+    }
+
+    /**
+     * Allow adapter to handle a change of state of a column actions.
+     *
+     * @param \DataGrid\Event\AdapterEvent $e
+     * @return void
+     */
+    abstract public function onAction(AdapterEvent $e);
 }

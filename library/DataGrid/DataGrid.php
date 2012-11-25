@@ -294,6 +294,7 @@ class DataGrid
     {
         if (null === $this->eventManager) {
             $this->eventManager = new Manager();
+            $this->registerDefaultListeners();
         }
         return $this->eventManager;
     }
@@ -315,6 +316,21 @@ class DataGrid
                 throw new Exception\InvalidArgumentException($message);
             }
         }
+    }
+
+    public function registerDefaultListeners()
+    {
+//        $this->eventManager->attach(
+//            Event\GridEvent::EVENT_EXECUTE,
+//            function($e) {
+//                $filterEvent = new Event\AdapterEvent('action');
+//                $filterEvent->setAction('');
+//
+//                /** @var $e \DataGrid\Event\GridEvent */
+//                $em = $e->getDataGrid()->getEventManager();
+//                $em->trigger();
+//            }
+//        );
     }
 
     /**

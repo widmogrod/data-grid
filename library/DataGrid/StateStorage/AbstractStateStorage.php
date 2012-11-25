@@ -76,6 +76,4 @@ abstract class AbstractStateStorage implements StateStorageInterface
     {
         $this->container = $array;
     }
-
-
 }

@@ -2,19 +2,17 @@
 namespace DataGrid\Event;
 
 use DataGrid\DataGrid;
+use DataGrid\Adapter\ColumnInfo\ColumnInfoInterface;
+use DataGrid\Adapter\AdapterInterface;
 
-class GridEvent implements EventInterface
+class AdapterEvent implements EventInterface
 {
     /**#@+
      * Event types
      *
      * @var string
      */
-    const EVENT_RENDER = 'render';
-    const EVENT_EXECUTE = 'execute';
-    const EVENT_RENDERER_SET = 'renderer_set';
-    const EVENT_ADAPTER_SET = 'adapter_set';
-    const EVENT_STATE_STORAGE_SET = 'state_storage_set';
+    const EVENT_ACTION = 'action';
     /**#@+*/
 
     /**
@@ -39,15 +37,11 @@ class GridEvent implements EventInterface
     protected $stopPropagation;
 
     /**
-     * Ensure to construct object with required params.
-     *
-     * @param string $name
-     * @param \DataGrid\DataGrid $dataGrid
+     * Construct event
      */
-    public function __construct($name, DataGrid $dataGrid)
+    public function __construct()
     {
-        $this->name = (string) $name;
-        $this->setParam('grid', $dataGrid);
+        $this->name = (string) self::EVENT_ACTION;
     }
 
     /**
@@ -124,5 +118,51 @@ class GridEvent implements EventInterface
     public function getParams()
     {
         return $this->params;
+    }
+
+    public function setAction($action)
+    {
+        $this->setParam('action', $action);
+    }
+
+    public function getAction()
+    {
+        return $this->getParam('action');
+    }
+
+    public function setValue($value)
+    {
+        $this->setParam('value', $value);
+    }
+
+    public function getValue()
+    {
+        return $this->getParam('value');
+    }
+
+    public function setAdapter(AdapterInterface $adaptable)
+    {
+        $this->setParam('adapter', $adaptable);
+    }
+
+    /**
+     * @return AdapterInterface
+     */
+    public function getAdapter()
+    {
+        return $this->getParam('adapter');
+    }
+
+    public function setColumn(ColumnInfoInterface $column)
+    {
+        $this->setParam('column', $column);
+    }
+
+    /**
+     * @return ColumnInfoInterface
+     */
+    public function getColumn()
+    {
+        return $this->getParam('column');
     }
 }
