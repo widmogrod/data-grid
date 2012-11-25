@@ -2,8 +2,12 @@
 namespace DataGrid\Renderer;
 
 use DataGrid as Grid;
+use DataGrid\Event\ListenerInterface;
+use DataGrid\Event\ManagerInterface;
+use DataGrid\Event\EventInterface;
+use DataGrid\Event\GridEvent;
 
-class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
+class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface, ListenerInterface
 {
     /**
      * @var Grid\DataGrid
@@ -17,6 +21,11 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
         $this->dataGrid = $dataGrid;
     }
 
+    public function attach(ManagerInterface $manager)
+    {
+        $manager->attach(GridEvent::EVENT_RENDER, array($this, 'onRender'));
+    }
+
     public function render()
     {
         $tableClass = 'table zebra-striped';
@@ -24,6 +33,12 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
         $body = $this->renderBody();
         $foot = $this->renderFoot();
         return sprintf('<table class="%s">%s %s %s</table>', $tableClass, $head, $body, $foot);
+    }
+
+    public function onRender(EventInterface $e = null)
+    {
+        $e->stopPropagation(true);
+        return $this->render();
     }
 
     private function renderBody()
@@ -53,9 +68,9 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
         $specialCells = $this->renderSpecialColumns($columns);
 
         $rows = array();
-        while($column = array_shift($columns)) {
-            $name = $column['name'];
-            $rows[$name] = $column['name'];
+        foreach ($columns as $column) {
+            $name = $column->getName();
+            $rows[$name] = $name;
         }
 
         $rows = array_merge($rows, $specialCells);
@@ -69,14 +84,12 @@ class HtmlTable implements RendererInterface, Grid\DataGridAwareInterface
     {
         if (null === $this->columnsNames)
         {
-            $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
-
             $this->columnsNames = array();
-            while($column = array_shift($columns)) {
-                $this->columnsNames[] = $column['name'];
+            $columns = $this->dataGrid->getAdapter()->getColumnsInfo();
+            foreach ($columns as $column) {
+                $this->columnsNames[] = $column->getName();
             }
         }
-
         return $this->columnsNames;
     }
 

@@ -3,6 +3,8 @@ namespace DataGrid\Adapter;
 
 use DataGrid\Event\ManagerInterface;
 use DataGrid\Event\ListenerInterface;
+use DataGrid\Event\EventInterface;
+use DataGrid\Event\GridEvent;
 
 class ArrayObject extends AbstractAdapter implements ListenerInterface
 {
@@ -12,13 +14,34 @@ class ArrayObject extends AbstractAdapter implements ListenerInterface
 
     public function attach(ManagerInterface $manager)
     {
-        $manager->attach('render', array($this, 'onRender'));
+        $manager->attach(GridEvent::EVENT_EXECUTE, array($this, 'onExecute'));
     }
 
-    public function onRender(\DataGrid\Event\Event $e)
+    public function onExecute(EventInterface $e)
     {
-        $state = $e->getDataGrid()->getStateStorage();
-        $state->getItemsPerPage();
+        $stateStorage = $e->getDataGrid()->getStateStorage();
+
+        $this->changeItemsPerPage($stateStorage->getItemsPerPage());
+        $this->changePageNumber($stateStorage->getPageNumber());
+
+        foreach ($this->getColumnsInfo() as $column) {
+            $actions = $stateStorage->getColumnActions($column->getName());
+            $this->triggerActionOnColumn($column->getName(), $actions);
+        }
+    }
+
+    protected function changePageNumber($number)
+    {
+
+    }
+
+    protected function changeItemsPerPage($number)
+    {
+
+    }
+
+    protected function triggerActionOnColumn($column, array $actions) {
+
     }
 
     public function fetchData()
@@ -33,6 +56,11 @@ class ArrayObject extends AbstractAdapter implements ListenerInterface
         }
     }
 
+    /**
+     * Get columns info
+     *
+     * @return \DataGrid\Adapter\ColumnInfo\ColumnInfoInterface[]
+     */
     public function getColumnsInfo()
     {
         if (null === $this->columnInfo)
@@ -42,10 +70,8 @@ class ArrayObject extends AbstractAdapter implements ListenerInterface
             {
                 $row = current($rowset);
                 $row = array_keys($row);
-                $this->columnInfo = array_map(function($column) {
-                    return array(
-                        'name' => $column
-                    );
+                $this->columnInfo = array_map(function($columnName) {
+                    return new \DataGrid\Adapter\ColumnInfo\Generic($columnName, 'string');
                 }, $row);
             }
         }

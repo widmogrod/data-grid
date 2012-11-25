@@ -17,6 +17,11 @@ interface AdapterInterface
 
     public function getTotalRecordsNumber();
 
+    /**
+     * Get columns info
+     *
+     * @return \DataGrid\Adapter\ColumnInfo\ColumnInfoInterface[]
+     */
     public function getColumnsInfo();
 
     public function toArray();

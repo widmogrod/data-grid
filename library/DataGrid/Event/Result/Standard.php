@@ -4,65 +4,93 @@ namespace DataGrid\Event\Result;
 class Standard implements ResultInterface
 {
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
+     * Collection of data to iterate
+     *
+     * @var array
      */
+    protected $data = array();
+
+    /**
+     * Position of iteration.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
+    /**
+     * Number of items in iterator.
+     *
+     * @var int
+     */
+    protected $count = 0;
+
     public function current()
     {
-        // TODO: Implement current() method.
+        return array_key_exists($this->position, $this->data)
+            ? $this->data[$this->position]
+            : null;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
-     */
     public function next()
     {
-        // TODO: Implement next() method.
+        ++$this->position;
     }
 
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
-     */
     public function key()
     {
-        // TODO: Implement key() method.
+        return $this->position;
     }
 
-    public function first()
+    public function valid()
     {
-        // TODO: Implement first() method.
+        return $this->position < $this->count;
     }
 
-    public function last()
+    public function rewind()
     {
-        // TODO: Implement last() method.
-    }
-
-    public function append($value)
-    {
-        // TODO: Implement append() method.
+        $this->position = 0;
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * Return first element in queue
+     *
+     * @return mixed
      */
-    public function count()
+    public function first()
     {
-        // TODO: Implement count() method.
+        $key = 0;
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
+            : null;
     }
 
+    /**
+     * Return last element in queue
+     *
+     * @return mixed
+     */
+    public function last()
+    {
+        $key = $this->count -1;
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
+            : null;
+    }
+
+    /**
+     * Append element in queue
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function append($value)
+    {
+        $this->data[] = $value;
+        ++$this->count;
+    }
+
+    public function count()
+    {
+        return $this->count;
+    }
 }

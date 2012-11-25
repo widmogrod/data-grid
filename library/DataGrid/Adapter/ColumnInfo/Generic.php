@@ -1,8 +1,23 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: gabrielhabryn
- * Date: 25.11.2012
- * Time: 11:13
- * To change this template use File | Settings | File Templates.
- */
+namespace DataGrid\Adapter\ColumnInfo;
+
+class Generic implements ColumnInfoInterface
+{
+    protected $name;
+    protected $type;
+
+    public function __construct($name, $type)
+    {
+        $this->name = $name;
+        $this->type = $type;
+    }
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+}

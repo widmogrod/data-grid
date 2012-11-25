@@ -1,8 +1,26 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: gabrielhabryn
- * Date: 25.11.2012
- * Time: 11:55
- * To change this template use File | Settings | File Templates.
- */
+namespace DataGrid\Event\Result;
+
+interface ResultInterface extends \Iterator, \Countable
+{
+    /**
+     * Return first element in queue
+     *
+     * @return mixed
+     */
+    public function first();
+
+    /**
+     * Return last element in queue
+     * @return mixed
+     */
+    public function last();
+
+    /**
+     * Append element in queue
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function append($value);
+}

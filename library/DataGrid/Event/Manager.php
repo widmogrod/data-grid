@@ -13,9 +13,15 @@ class Manager implements ManagerInterface
      */
     protected $listeners = array();
 
+    /**
+     * Trigger event
+     *
+     * @param EventInterface $event
+     * @return Result\ResultInterface
+     */
     public function trigger(EventInterface $event)
     {
-        $results = new \ArrayIterator();
+        $results = new Result\Standard();
         $eventName = $event->getName();
         foreach ($this->getEventListeners($eventName) as $listener)
         {
@@ -35,6 +41,12 @@ class Manager implements ManagerInterface
         return $results;
     }
 
+    /**
+     * Attache event(s) to event manager
+     *
+     * @param string|ListenerInterface $listenerOrEvent
+     * @param null|callable $listenerOrCallback
+     */
     public function attach($listenerOrEvent, $listenerOrCallback = null, $priority = null)
     {
         if ($listenerOrEvent instanceof ListenerInterface) {

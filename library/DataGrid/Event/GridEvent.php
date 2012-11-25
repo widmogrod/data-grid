@@ -3,8 +3,20 @@ namespace DataGrid\Event;
 
 use DataGrid\DataGrid;
 
-class Event implements EventInterface
+class GridEvent implements EventInterface
 {
+    /**#@+
+     * Event types
+     *
+     * @var string
+     */
+    const EVENT_RENDER = 'render';
+    const EVENT_EXECUTE = 'execute';
+    const EVENT_RENDERER_SET = 'renderer_set';
+    const EVENT_ADAPTER_SET = 'adapter_set';
+    const EVENT_STATE_STORAGE_SET = 'state_storage_set';
+    /**#@+*/
+
     /**
      * Event name
      *
@@ -51,6 +63,4 @@ class Event implements EventInterface
     {
         return $this->stopPropagation;
     }
-
-
 }

@@ -65,11 +65,11 @@ class DataGrid extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers DataGrid\DataGrid::render
-     * @expectedException \DataGrid\Exception\InvalidArgumentException
      */
     public function testRenderFailure()
     {
-        $this->object->render();
+        $result = $this->object->render();
+        $this->assertNull($result);
     }
 
     /**
@@ -110,7 +110,8 @@ class DataGrid extends \PHPUnit_Framework_TestCase
                 array(
                     'edit_link' => array(
                         'cell' => '/admin/link/edit',
-                        'column' => 'Edit link'
+                        'column' => 'Edit link',
+                        'actions' => null
                     )
                 )
             ),

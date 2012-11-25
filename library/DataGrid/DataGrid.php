@@ -13,11 +13,15 @@ use DataGrid\StateStorage\Get;
 
 class DataGrid
 {
-    /**
+    /**#@+
      * Types of data elements
+     *
+     * @var string
      */
     const CELL = 'cell';
     const COLUMN = 'column';
+    const ACTIONS = 'actions';
+    /**#@+*/
 
     /**
      * Provided data adapter
@@ -170,6 +174,8 @@ class DataGrid
         }
 
         $this->adapter = $dataOrAdapter;
+
+        $this->triggerEvent(Event\GridEvent::EVENT_ADAPTER_SET);
     }
 
     public function getAdapter()
@@ -190,7 +196,10 @@ class DataGrid
         if ($renderer instanceof ListenerInterface) {
             $this->getEventManager()->attach($renderer);
         }
+
         $this->renderer = $renderer;
+
+        $this->triggerEvent(Event\GridEvent::EVENT_RENDERER_SET);
     }
 
     public function getRenderer()
@@ -205,14 +214,16 @@ class DataGrid
 
     public function toArray()
     {
+        $this->triggerEvent(Event\GridEvent::EVENT_EXECUTE);
+
         return $this->getAdapter()->toArray();
     }
 
     public function render()
     {
-        $e = new Event\Event('render', $this);
-        $this->getEventManager()->trigger($e);
-        return $this->getRenderer()->render();
+        $this->triggerEvent(Event\GridEvent::EVENT_EXECUTE);
+
+        return $this->triggerEvent(Event\GridEvent::EVENT_RENDER)->last();
     }
 
     public function setSpecialColumn($columnName, $columnOptions)
@@ -220,6 +231,7 @@ class DataGrid
         $baseOptions = array(
             self::CELL => null,
             self::COLUMN => null,
+            self::ACTIONS => null,
         );
 
         if (is_array($columnOptions))
@@ -287,6 +299,25 @@ class DataGrid
     }
 
     /**
+     * Set event listeners collection
+     *
+     * @param ListenerInterface[] $listeners
+     * @throws Exception\InvalidArgumentException when listener in collection is not instance of DataGrid\Event\ListenerInterface
+     */
+    public function setListeners(array $listeners)
+    {
+        $em = $this->getEventManager();
+        foreach ($listeners as $listener) {
+            if ($listener instanceof ListenerInterface) {
+                $em->attach($listener);
+            } else {
+                $message = 'Listener is not instance of "DataGrid\Event\ListenerInterface"';
+                throw new Exception\InvalidArgumentException($message);
+            }
+        }
+    }
+
+    /**
      * @param \DataGrid\StateStorage\StateStorageInterface $stateStorage
      */
     public function setStateStorage(StateStorageInterface $stateStorage)
@@ -295,6 +326,8 @@ class DataGrid
             $stateStorage->setDataGrid($this);
         }
         $this->stateStorage = $stateStorage;
+
+        $this->triggerEvent(Event\GridEvent::EVENT_STATE_STORAGE_SET);
     }
 
     /**
@@ -306,5 +339,17 @@ class DataGrid
             $this->setStateStorage(new Get());
         }
         return $this->stateStorage;
+    }
+
+    /**
+     * Trigger grid event $name.
+     *
+     * @param string $name
+     * @return Event\Result\ResultInterface
+     */
+    protected function triggerEvent($name)
+    {
+        $e = new Event\GridEvent($name, $this);
+        return $this->getEventManager()->trigger($e);
     }
 }
